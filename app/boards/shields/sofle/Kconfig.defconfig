@@ -4,7 +4,7 @@
 if SHIELD_SOFLE_LEFT
 
 config ZMK_KEYBOARD_NAME
-    default "SofleGM"
+    default "SofleGM v2"
 
 config ZMK_SPLIT_ROLE_CENTRAL
     default y
