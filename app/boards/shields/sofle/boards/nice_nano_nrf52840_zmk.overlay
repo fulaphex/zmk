@@ -1,15 +1,21 @@
 #include <dt-bindings/led/led.h>
 
+/*
+ * This PCB (Sofle Choc Wireless, github.com/db-ok/SofleChocWireless) relocates
+ * the per-key RGB data line to P0.08 (Arduino D0) to free up P0.06 (D1) for
+ * the nice!view CS pin, instead of the P0.06 the stock sofle+nice_nano/zmk
+ * overlay assumes.
+ */
 &pinctrl {
     spi3_default: spi3_default {
         group1 {
-            psels = <NRF_PSEL(SPIM_MOSI, 0, 6)>;
+            psels = <NRF_PSEL(SPIM_MOSI, 0, 8)>;
         };
     };
 
     spi3_sleep: spi3_sleep {
         group1 {
-            psels = <NRF_PSEL(SPIM_MOSI, 0, 6)>;
+            psels = <NRF_PSEL(SPIM_MOSI, 0, 8)>;
             low-power-enable;
         };
     };
@@ -31,7 +37,7 @@
         spi-max-frequency = <4000000>;
 
         /* WS2812 */
-        chain-length = <36>; /* arbitrary; change at will */
+        chain-length = <30>; /* Sofle Choc Wireless: 60 SK6812 MINI-E LEDs total, 30 per half */
         spi-one-frame = <0x70>;
         spi-zero-frame = <0x40>;
 

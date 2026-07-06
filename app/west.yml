@@ -12,6 +12,7 @@ manifest:
       import:
         name-blocklist:
           - ci-tools
+          - cmsis-dsp
           - hal_altera
           - hal_cypress
           - hal_infineon

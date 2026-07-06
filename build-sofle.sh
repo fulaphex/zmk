@@ -9,7 +9,13 @@
 
 set -euo pipefail
 
-BOARD="nice_nano"
+# The plain "nice_nano" board target omits the "zmk" board variant (see
+# app/boards/nicekeyboards/nice_nano/board.yml and app/core-coverage.yml for
+# the same "nice_nano//zmk" target used in ZMK's own CI), which wires up
+# battery ADC support (CONFIG_ZMK_BATTERY) among other things. Its own WS2812
+# wiring is on the wrong pin for this PCB though, so sofle_left/right.overlay
+# override the underglow node with the correct pin for this board.
+BOARD="nice_nano//zmk"
 SHIELD="sofle"
 BUILD_DIR="build"
 CLEAN=0
@@ -61,6 +67,11 @@ if [[ "$CLEAN" -eq 1 ]]; then
     echo "==> Clean requested, removing previous build output"
     rm -rf "$BUILD_DIR/left" "$BUILD_DIR/right" "$BUILD_DIR/settings_reset"
     PRISTINE_ARGS=(-p)
+
+    if command -v ccache >/dev/null 2>&1; then
+        echo "==> Clearing ccache"
+        ccache -C >/dev/null
+    fi
 fi
 
 SHIELD_DIR="${SCRIPT_DIR}/app/boards/shields/${SHIELD}"
