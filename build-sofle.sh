@@ -63,11 +63,20 @@ if [[ "$CLEAN" -eq 1 ]]; then
     PRISTINE_ARGS=(-p)
 fi
 
+SHIELD_DIR="${SCRIPT_DIR}/app/boards/shields/${SHIELD}"
+
+# The sofle shield predates Zephyr's YAML shield format, and its .conf
+# fragments aren't reliably auto-discovered by the current Zephyr version's
+# shield config merging. Pass them explicitly so settings like
+# CONFIG_ZMK_POINTING actually make it into the build.
+LEFT_CONF_FILES="${SHIELD_DIR}/${SHIELD}.conf;${SHIELD_DIR}/${SHIELD}_left.conf"
+RIGHT_CONF_FILES="${SHIELD_DIR}/${SHIELD}.conf;${SHIELD_DIR}/${SHIELD}_right.conf"
+
 echo "==> Building left half (${SHIELD}_left)"
-west build -s app -d "$BUILD_DIR/left" "${PRISTINE_ARGS[@]}" -b "$BOARD" -- -DSHIELD="${SHIELD}_left"
+west build -s app -d "$BUILD_DIR/left" "${PRISTINE_ARGS[@]}" -b "$BOARD" -- -DSHIELD="${SHIELD}_left" -DEXTRA_CONF_FILE="$LEFT_CONF_FILES"
 
 echo "==> Building right half (${SHIELD}_right)"
-west build -s app -d "$BUILD_DIR/right" "${PRISTINE_ARGS[@]}" -b "$BOARD" -- -DSHIELD="${SHIELD}_right"
+west build -s app -d "$BUILD_DIR/right" "${PRISTINE_ARGS[@]}" -b "$BOARD" -- -DSHIELD="${SHIELD}_right" -DEXTRA_CONF_FILE="$RIGHT_CONF_FILES"
 
 if [[ "$RESET" -eq 1 ]]; then
     echo "==> Building settings_reset firmware"
